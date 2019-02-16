@@ -8,7 +8,7 @@ import router from './router'
 
 // ElementUI其实是Vue插件，和VueRouter用法一样  Vue.use(名)
 // Vue插件的使用
-
+// 下载element后，引入
 Vue.use(ElementUI)
 
 Vue.config.productionTip = false
