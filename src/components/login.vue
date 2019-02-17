@@ -23,10 +23,41 @@ export default {
       }
     }
   },
+
+  
   methods: {
     // 发起登录的请求
-    handlelogin () {
-      this.$http.post(`login`, this.formdata).then((res) => {
+    async handlelogin () {
+      // 目前代码:异步的结果res在一个函数里面获取的 --异步代码特点
+      // 目的:res的获取是同步（代码一行一行走）
+      // 同步代码：
+      // const res = axios请求返回的结果
+      // console.log(res)
+      const res = await this.$http.post(`login`, this.formdata)
+      // console.log(res)
+      // 当username和password错误 ->res中data ->null -> 对象解构赋值，只能解构伪数组的容器类型
+      const {
+        data: {
+          data,
+          meta: { msg, status }
+        }
+      } = res
+      if (status === 200) {
+        // 提示：token值目前不需要关心，将来要用，把token永久存储
+        // session/cookie/localStorage(html5新特性，存大容积数据使用)
+        // localStorage是window对象下自带的对象，很像console，localStorage是全局变量，是对象类型
+        // （key名：要存储的数据）
+        localStorage.setItem('token', data.token)
+        // 渲染home.vue <- 该标识/ <-js代码编程导航$router
+        this.$router.push({
+          name: 'home'
+        })
+      } else {
+        // 用户名/密码错误
+        this.$message.error(msg)
+      }
+      /*
+      .then((res) => {
         console.log(res)
         const {
           data: {
@@ -35,18 +66,19 @@ export default {
           }
         } = res
         if (status === 200) {
-          console.log('login--success--')
+          // 渲染home.vue <- 该标识/ <-js代码编程导航$router
+          this.$router.push({
+            name: 'home'
+          })
         } else {
-          console.log('error---')
+          // 用户名/密码错误
+          this.$message.error(msg)
         }
-        // const {per} = {per:"abc"}
-        // console.log(per)  abc
-        // const {name:newname} = {name:'abc'}
-        // console.log(newname)   abc
       })
-        .catch(err => {
-          console.log(err)
-        })
+      */
+    // .catch(err => {
+    //   console.log(err)
+    // })
     }
   }
 }
